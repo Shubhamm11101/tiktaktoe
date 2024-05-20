@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Tic Tac Toe</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .board {
+            margin: 20px auto;
+            width: 300px;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .cell {
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            display: flex;
+            font-size: 80px;
+            height: 100px;
+            justify-content: center;
+            width: 100px;
+        }
+
+        .cell:hover {
+            background-color: #e6e6e6;
+        }
+
+        .status {
+            margin-top: 20px;
+        }
+
+        .restart-button {
+            background-color: #4caf50;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .restart-button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="board">
+        <div class="row">
+            <div class="cell" data-cell-index="0"></div>
+            <div class="cell" data-cell-index="1"></div>
+            <div class="cell" data-cell-index="2"></div>
+        </div>
+        <div class="row">
+            <div class="cell" data-cell-index="3"></div>
+            <div class="cell" data-cell-index="4"></div>
+            <div class="cell" data-cell-index="5"></div>
+        </div>
+        <div class="row">
+            <div class="cell" data-cell-index="6"></div>
+            <div class="cell" data-cell-index="7"></div>
+            <div class="cell" data-cell-index="8"></div>
+        </div>
+    </div>
+    <div class="status"></div>
+    <button class="restart-button" onclick="reset()">Restart</button>
+    <script>// Select all the cell elements
+        const cells = document.querySelectorAll('.cell');
+
+        // Audios
+        const beep = new Audio('beep.mp3');
+        const gMusic = new Audio('gameMusic.mp3');
+        const gOver = new Audio('gameOver.mp3');
+
+        // Set the initial game state
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+
+        // Add a click event listener to each cell element
+        gMusic.play()
+        cells.forEach((cell) => {
+            cell.addEventListener('click', handleCellClick);
+            //   beep.play();
+        });
+
+        // Function to handle the cell click event
+        function handleCellClick(event) {
+            // Get the index of the clicked cell
+            const clickedCellIndex = parseInt(event.target.getAttribute('data-cell-index'));
+
+            // Ignore clicks on cells that have already been clicked or if the game is over
+            if (gameBoard[clickedCellIndex] !== '' || checkForWin()) {
+                return;
+            }
+
+            // Update the game state
+            gameBoard[clickedCellIndex] = currentPlayer;
+            event.target.textContent = currentPlayer;
+
+            // Check for a win or a draw
+            if (checkForWin()) {
+                // Update the status message to display the winner
+                document.querySelector('.status').textContent = `Player ${currentPlayer} has won!`;
+            } else if (checkForDraw()) {
+                // Update the status message to display a draw
+                gOver.play();
+                gMusic.pause();
+
+                document.querySelector('.status').textContent = 'Draw!';
+            } else {
+                // Switch to the other player's turn
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                // Update the status message to display whose turn it is
+                document.querySelector('.status').textContent = `It's ${currentPlayer}'s turn`;
+            }
+            beep.play()
+        }
+
+        // Function to check if a player has won the game
+        function checkForWin() {
+            const winningConditions = [
+                // Rows
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                // Columns
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                // Diagonals
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                    gOver.play();
+                    gMusic.pause()
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+        // Function to check if the game is a draw
+        function checkForDraw() {
+
+
+            return gameBoard.every((cell) => cell !== '');
+        }
+
+        reset = () => {
+            location.reload()
+        }</script>
+</body>
+
+</html>
